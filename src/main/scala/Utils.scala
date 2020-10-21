@@ -1,6 +1,6 @@
 package my
 
-import java.io.File
+import java.io.{File, PrintWriter}
 import java.util.logging.{FileHandler, Logger, SimpleFormatter}
 
 import breeze.stats.{mean, variance}
@@ -21,6 +21,15 @@ object Utils {
     val X = data(::, cols).toDenseMatrix
     val y: DenseVector[Double] = data(::, targetCol)
     (X, y)
+  }
+
+  def writeResultsToFile(path: String, iterator: DenseVector[Double]): Unit = {
+    val writer = new PrintWriter(new File(path))
+
+    for (el <- iterator) {
+      writer.write(f"$el\n")
+    }
+    writer.close()
   }
 
   def getLogger(name: String, outputPath: String): Logger = {

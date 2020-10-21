@@ -1,5 +1,7 @@
+import java.io.{File, PrintWriter}
+
 import my.LinearRegression
-import my.Utils.{getXyFromCsvPath, mae, getLogger}
+import my.Utils.{getLogger, getXyFromCsvPath, mae, writeResultsToFile}
 
 object Main {
 
@@ -10,10 +12,14 @@ object Main {
     var dataTrain = ""
     var dataTest = ""
     var targetCol = 0
+    var outTrain = ""
+    var outTest = ""
     args.sliding(2, 2).toList.collect {
       case Array("--data-train", argDataTrain: String) => dataTrain = argDataTrain
       case Array("--data-test", argDataTest: String) => dataTest = argDataTest
       case Array("--target-column", argTargetCol: String) => targetCol = argTargetCol.toInt
+      case Array("--out-train", argOutTrain: String) => outTrain = argOutTrain
+      case Array("--out-test", argOutTest: String) => outTest = argOutTest
     }
 
 
@@ -29,6 +35,7 @@ object Main {
     val y_hat_train = lr.predict(X_train)
     val mae_train = mae(y_hat_train, y_train)
     logger.info(f"MAE train: $mae_train%.2f")
+    writeResultsToFile(outTrain, y_hat_train)
 
     logger.info(f"Loading validation data: $dataTest")
     val Xy_test = getXyFromCsvPath(dataTest, targetCol)
@@ -37,6 +44,8 @@ object Main {
     val y_hat_test = lr.predict(X_test)
     val mae_test = mae(y_hat_test, y_test)
     logger.info(f"MAE test: $mae_test%.2f")
+    writeResultsToFile(outTest, y_hat_test)
+
 
   }
 }
